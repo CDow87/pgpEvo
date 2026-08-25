@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pgp-evolution"
+version = "0.1.0"
+description = "A layered implementation of PGP from its 1991 origins to post-quantum hybrid encryption"
+requires-python = ">=3.11"
+dependencies = [
+    # Cryptographic primitives only -- all protocol logic is hand-written
+    "cryptography>=42.0",   # X25519, Ed25519, AES-GCM, ChaCha20-Poly1305, RSA, HKDF
+    "pyoqs>=0.10",          # ML-KEM-768 (Kyber) for post-quantum layer
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.4",
+    "mypy>=1.10",
+]
+
+[project.scripts]
+pgp-classic   = "pgp_evolution.classic.cli:main"
+pgp-v4        = "pgp_evolution.openpgp_v4.cli:main"
+pgp-v6        = "pgp_evolution.openpgp_v6.cli:main"
+age-enc       = "pgp_evolution.age_like.cli:main"
+pq-enc        = "pgp_evolution.pq_hybrid.cli:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
